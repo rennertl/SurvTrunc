@@ -66,7 +66,6 @@ coxDT(Surv(Induction.time,status)~Adult,L.time,R.time,data=AIDS,B.SE.np=2)
 
 # WARNING: To save computation time, number of bootstrap resamples for standard error set to 2.
 # Note: The minimum recommendation is 200, which is the default setting.
-
 ##### Including time-dependent covariates #####
 # Accomodating time-dependent covariates in the model is similar to the accomodation in coxph
 
@@ -94,15 +93,14 @@ coxDT(Surv(Induction.time,status)~Adult,L.time,R.time,data=AIDS,B.SE.np=2)
 
 
 test.data <- data.frame(
-list(subject.id = c(1, 2, 2, 3, 4, 4, 5, 6, 7, 8, 8, 9, 10, 11, 12, 13, 14, 15, 15),
-    start      = c(3, 5, 7, 2, 1, 2, 6, 5, 6, 6, 7, 2, 17, 16, 14, 11, 12, 13, 18),
-    stop       = c(4, 7, 8, 5, 2, 6, 9, 8, 7, 7, 9, 6, 21, 19, 27, 14, 17, 18, 20),
-    event      = c(1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1,  1,  1,  1,  1,  0,  1 ),
-    treatment  = c(0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,  2,  2,  2,  2,  2,  2 ),
-    test.score = c(5, 6, 7, 4, 6, 9, 3, 4, 4, 7, 6, 4, 12, 16, 18, 12, 18, 16, 19),
-    L.time     = c(2, 4, 4, 2, 1, 1, 4, 5, 4, 3, 3, 1, 10, 14, 11, 10, 11, 13, 13),
-    R.time     = c(6, 9, 9, 6, 7, 7, 9, 9, 8, 8, 9, 8, 24, 21, 29, 14, 19, 21, 21)
-    ))
+list(subject.id = c(1, 2, 2, 3, 4, 4, 5, 6, 7, 8, 8, 9, 10),
+    start      = c(3, 5, 7, 2, 1, 2, 6, 5, 6, 6, 7, 2, 17),
+    stop       = c(4, 7, 8, 5, 2, 6, 9, 8, 7, 7, 9, 6, 21),
+    event      = c(1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1),
+    treatment  = c(0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1),
+    test.score = c(5, 6, 7, 4, 6, 9, 3, 4, 4, 7, 6, 4, 12),
+    L.time     = c(2, 4, 4, 2, 1, 1, 4, 5, 4, 3, 3, 1, 10),
+    R.time     = c(6, 9, 9, 6, 7, 7, 9, 9, 8, 8, 9, 8, 24)))
 
  coxDT(Surv(start,stop,event)~treatment+test.score,L.time,R.time,data=test.data,
  time.var=TRUE,subject=subject.id,B.SE.np=2)
