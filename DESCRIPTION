@@ -5,7 +5,7 @@ Version: 0.1.0
 Date: 2018-07-13
 Author: Lior Rennert
 Maintainer: Lior Rennert <liorr@clemson.edu>
-Description: Package contains functions to perform Cox regression and survival distribution function estimation when the survival times are subject to double truncation. Both of these are weighted methods, where the weightscorrespond to the inverse of the selection probabilities and are estimated using the survival times and truncation times only. Both methods require that the survival and truncation times are quasi-independent. A test for checking this independence assumption is also included in this package.
+Description: Package contains functions to perform Cox regression and survival distribution function estimation when the survival times are subject to double truncation. The estimation procedure for each method involves inverse probability weighting, where the weights correspond to the inverse of the selection probabilities and are estimated using the survival times and truncation times only. Both methods require that the survival and truncation times are quasi-independent. A test for checking this independence assumption is also included in this package.
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
