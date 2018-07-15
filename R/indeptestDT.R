@@ -12,7 +12,7 @@
 #'
 #'@return
 #'\item{tau}{Conditional Kendall's tau for survival time and left truncation time and survival time and right truncation time}
-#'\item{X2}{Chi-squared test statistic to test null hypothesis that survival and truncation times are quasi-independent}
+#'\item{X2}{Chi-squared test statistic to test null hypothesis that survival and truncation times are quasi-independent. Default degrees of freedom (DF) is 2. If left and right truncation times perfectly correlated, DF = 1}
 #'\item{p}{p-value for null hypothesis that survival and truncation times are quasi-independent}
 #'
 #'@references Martin and Betensky (2005). Testing Quasi-Independence of Failure and Truncation Times via Conditional Kendall's Tau. JASA. 100(470):484-492.
@@ -82,6 +82,7 @@ indeptestDT=function(y,l,r)
 
   }
   tau=matrix(apply(temp.i,2,"sum"),ncol=2)/M;
+  colnames(tau)=c("tau.L","tau.R")
   tau.uv=sum(temp.i.uv)/M;
   mu=M/choose(n,2);
   U.c=tau*mu;
@@ -90,11 +91,22 @@ indeptestDT=function(y,l,r)
   var.12=sum(var.vw)/(2*n*choose(n-1,2))
   var.22=sum(var.w)/(2*n*choose(n-1,2))
 
-  X2=0.25*n*U.c%*%solve(matrix(c(var.11,var.12,var.12,var.22),nrow=2,ncol=2))%*%t(U.c);
+  if(cor(u,v)==1){
+    X2=0.25*n*U.c[,1]^2/var.11;
+    p=1-pchisq(X2,1);
+    p=round(1-pchisq(X2,2),3);
+    p[which(p==0)]="<.0005";
+    cat("Left and right truncation times perfectly correlated","\n");
+    cat("DF(chi-squared test statistic) = 1","\n")};
 
-  p=1-pchisq(X2,2);
+  if(cor(u,v)<1) {
+    X2=0.25*n*U.c%*%solve(matrix(c(var.11,var.12,var.12,var.22),nrow=2,ncol=2))%*%t(U.c);
+    p=round(1-pchisq(X2,2),3);
+    p[which(p==0)]="<.0005";
+  cat("DF(chi-squared test statistic) = 2","\n")};
 
-  cat("number of observations read", nrows.data, "\n")
-  cat("number of observations used", nrows.data.omit, "\n\n")
-  return(list(tau=tau,X2=X2,p=p))
+
+  cat("number of observations read:", nrows.data, "\n")
+  cat("number of observations used:", nrows.data.omit, "\n\n")
+  return(list(tau=round(tau,3),test.statistic=round(X2,3),p.value=noquote(p)))
 }

@@ -15,7 +15,7 @@ indeptestDT(y, l, r)
 }
 \value{
 \item{tau}{Conditional Kendall's tau for survival time and left truncation time and survival time and right truncation time}
-\item{X2}{Chi-squared test statistic to test null hypothesis that survival and truncation times are quasi-independent}
+\item{X2}{Chi-squared test statistic to test null hypothesis that survival and truncation times are quasi-independent. Default degrees of freedom (DF) is 2. If left and right truncation times perfectly correlated, DF = 1}
 \item{p}{p-value for null hypothesis that survival and truncation times are quasi-independent}
 }
 \description{
