@@ -151,12 +151,13 @@ coxDT = function(formula,L,R,data,subset,time.var=FALSE,subject=NULL,B.SE.np=200
       if(p==1) X.temp=X[temp.sample];
       if(p>=2) X.temp=X[temp.sample,];
 
-      P.obs.NP.temp=cdfDT(Y.temp,L.temp,R.temp,error,n.iter,display=FALSE)$P.K
+      out.temp=cdfDT(Y.temp,L.temp,R.temp,error,n.iter,display=FALSE)
 
-      if(length(which(P.obs.NP.temp<.01))==0) {break}
+      if(out.temp$max.iter_reached==0) {break}
     } # ending repeat loop
 
     # non-parametric weights (Shen) for cox regression
+    P.obs.NP.temp=out.temp$P.K
     weights.np.temp=1/P.obs.NP.temp
 
     # updating data set to include bootstrapped observations
@@ -200,14 +201,16 @@ coxDT = function(formula,L,R,data,subset,time.var=FALSE,subject=NULL,B.SE.np=200
           temp.sample1=unlist(sapply(temp.obs1,subjects,FUN=function(x,y) which(x==y)))
         }
         Y.temp1=Y[temp.sample1]; L.temp1=L[temp.sample1]; R.temp1=R[temp.sample1];
-        if(p==1) X.temp1=X[temp.sample1,];
+        if(p==1) X.temp1=X[temp.sample1];
         if(p>=2) X.temp1=X[temp.sample1,];
 
-        P.obs.NP.temp1=cdfDT(Y.temp1,L.temp1,R.temp1,error,n.iter,display=FALSE)$P.K
+        out.temp1=cdfDT(Y.temp1,L.temp1,R.temp1,error,n.iter,display=FALSE)
 
-        if(length(which(P.obs.NP.temp1<.01))==0) {break}
+
+        if(out.temp1$max.iter_reached==0) {break}
       } # ending repeat loop
 
+      P.obs.NP.temp1=out.temp1$P.K
       weights.np.temp1=1/P.obs.NP.temp1
 
       # updating data set to include bootstrapped observations
@@ -226,15 +229,15 @@ coxDT = function(formula,L,R,data,subset,time.var=FALSE,subject=NULL,B.SE.np=200
             temp.sample2=unlist(sapply(temp.obs2,subjects,FUN=function(x,y) which(x==y)))
           }
           Y.temp2=Y[temp.sample2]; L.temp2=L[temp.sample2]; R.temp2=R[temp.sample2];
-          if(p==1) X.temp2=X[temp.sample2,];
+          if(p==1) X.temp2=X[temp.sample2];
           if(p>=2) X.temp2=X[temp.sample2,];
 
-          P.obs.NP.temp2=cdfDT(Y.temp2,L.temp2,R.temp2,error,n.iter,display=FALSE)$P.K
+          out.temp2=cdfDT(Y.temp2,L.temp2,R.temp2,error,n.iter,display=FALSE)
 
-          if(length(which(P.obs.NP.temp2<.01))==0) {break}
+          if(out.temp2$max.iter_reached==0) {break}
         } # ending repeat loop
 
-        # non-parametric weights (Shen) for cox regression
+        P.obs.NP.temp2=out.temp2$P.K
         weights.np.temp2=1/P.obs.NP.temp2
 
 
@@ -272,8 +275,8 @@ coxDT = function(formula,L,R,data,subset,time.var=FALSE,subject=NULL,B.SE.np=200
   weights="print option not requested";
   if(print.weights==TRUE) weights=weights.np;
 
-  cat("number of observations read", nrows.data, "\n")
-  cat("number of observations used", nrows.data.omit, "\n\n")
+  cat("number of observations read:", nrows.data, "\n")
+  cat("number of observations used:", nrows.data.omit, "\n\n")
   if((CI.boot==TRUE)&(pvalue.boot==FALSE)) return(list(results.beta=results.beta,CI="Bootstrap",p.value="Normal approximation",weights=weights));
   if((CI.boot==FALSE)&(pvalue.boot==TRUE)) return(list(results.beta=results.beta,CI="Normal approximation",p.value="Bootstrap",weights=weights));
   if((CI.boot==TRUE)&(pvalue.boot==TRUE))  return(list(results.beta=results.beta,CI="Bootstrap",p.value="Bootstrap",weights=weights));
