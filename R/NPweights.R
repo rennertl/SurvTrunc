@@ -216,8 +216,8 @@ cdfDT=function(y,l,r,error=1e-6,n.iter=10000,boot=FALSE,B.boot=200,joint=FALSE,p
   colnames(summary) <- c("time", "n.event",  "cumulative.df", "survival")
   rownames(summary) <- rep("", times = length(unique(y)))
   print(summary, digits = 4, justify = "left")
-  cat("number of observations read", nrows.data, "\n")
-  cat("number of observations used", nrows.data.omit, "\n")
+  cat("number of observations read:", nrows.data, "\n")
+  cat("number of observations used:", nrows.data.omit, "\n")
   }
   if(max.iter_reached==1) print("Maximum number of iterations reached. Program did not converge")
   }
