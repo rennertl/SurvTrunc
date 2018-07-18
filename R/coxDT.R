@@ -14,8 +14,9 @@
 #'@param CI.boot requests bootstrap confidence intervals (default==FALSE)
 #'@param B.CI.boot number of iterations for bootstrapped confidence intervals (default = 2000)
 #'@param pvalue.boot requests bootstrap confidence intervals (default==FALSE)
-#'@param B.pvalue.boot number of iterations for bootstrapped p-values (default = 200)
-#'@param trunc.weight Truncates weights at a prespecified level (default==100). Trade off is a slight increase in bias for reduction in variance.
+#'@param B.pvalue.boot number of iterations for numerator (estimate) of bootstrapped test statistic (default = 500)
+#'@param B.pvalue.se.boot number of iterations for denominator (standard error) of bootstrapped test statistic (default = 100)
+#'@param trunc.weight Truncates weights at a prespecified level (default=100). Trade off is a slight increase in bias for reduction in variance.
 #'@param print.weights requests the output of nonparametric selection probabilities (default==FALSE)
 #'@param error convergence criterion for nonparametric selection probabilities (default = 10e-6)
 #'@param n.iter maximum number of iterations for computation of nonparamteric selection probabilities (default = 1000)
@@ -86,7 +87,7 @@
 
 
 coxDT = function(formula,L,R,data,subset,time.var=FALSE,subject=NULL,B.SE.np=200,CI.boot=FALSE,B.CI.boot=2000,pvalue.boot=FALSE,
-                 B.pvalue.boot=200,trunc.weight=100,print.weights=FALSE,error=10^-6,n.iter=1000)
+                 B.pvalue.boot=500,B.pvalue.se.boot=100,trunc.weight=100,print.weights=FALSE,error=10^-6,n.iter=1000)
 {
   if(missing(data)==TRUE) stop("Must specify data fame in 'data =' statement");
 
@@ -199,7 +200,8 @@ coxDT = function(formula,L,R,data,subset,time.var=FALSE,subject=NULL,B.SE.np=200
 
   if(pvalue.boot==TRUE)
   {
-    B1=B2=B.pvalue.boot
+    B1=B.pvalue.boot;
+    B2=B.pvalue.se.boot;
     beta.boot.np1=matrix(0,nrow=B1,ncol=p); beta.boot.np2=matrix(0,nrow=B2,ncol=p); beta.boot.np.sd1=matrix(0,nrow=B1,ncol=p)
     for(b1 in 1:B1) {
       repeat{ # creating repeat loop in case Shen algorithm fails
