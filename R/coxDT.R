@@ -15,9 +15,10 @@
 #'@param B.CI.boot number of iterations for bootstrapped confidence intervals (default = 2000)
 #'@param pvalue.boot requests bootstrap confidence intervals (default==FALSE)
 #'@param B.pvalue.boot number of iterations for bootstrapped p-values (default = 200)
+#'@param trunc.weight Truncates weights at a prespecified level (default==100). Trade off is a slight increase in bias for reduction in variance.
 #'@param print.weights requests the output of nonparametric selection probabilities (default==FALSE)
 #'@param error convergence criterion for nonparametric selection probabilities (default = 10e-6)
-#'@param n.iter maximum number of iterations for computation of nonparamteric selection probabilities (default = 10000)
+#'@param n.iter maximum number of iterations for computation of nonparamteric selection probabilities (default = 1000)
 #'@details Fits a Cox proportional hazards model in the presence of left and right truncation
 #'by weighting each subject in the score equation of the Cox model by the probability that they
 #'are observed in the sample. These selection probabilities are computed nonparametrically.
@@ -85,7 +86,7 @@
 
 
 coxDT = function(formula,L,R,data,subset,time.var=FALSE,subject=NULL,B.SE.np=200,CI.boot=FALSE,B.CI.boot=2000,pvalue.boot=FALSE,
-                 B.pvalue.boot=200,print.weights=FALSE,error=10^-6,n.iter=10000)
+                 B.pvalue.boot=200,trunc.weight=100,print.weights=FALSE,error=10^-6,n.iter=1000)
 {
   if(missing(data)==TRUE) stop("Must specify data fame in 'data =' statement");
 
@@ -118,6 +119,9 @@ coxDT = function(formula,L,R,data,subset,time.var=FALSE,subject=NULL,B.SE.np=200
   # weight estimation
   P.obs.y.np=cdfDT(Y,L,R,error,n.iter,display=FALSE)$P.K # estimating selection probabilities for each subject
   weights.np=1/P.obs.y.np                   # weights
+  ### truncating weights ###
+  weights.np[which(weights.np>trunc.weight)]=trunc.weight
+  ### # # # # # # # # #  ###
   P.obs.NP=n*(sum(1/P.obs.y.np))^(-1)       # estimating probability that random subject observed
 
 
@@ -158,7 +162,11 @@ coxDT = function(formula,L,R,data,subset,time.var=FALSE,subject=NULL,B.SE.np=200
 
     # non-parametric weights (Shen) for cox regression
     P.obs.NP.temp=out.temp$P.K
+
     weights.np.temp=1/P.obs.NP.temp
+    ### truncating weights ###
+    weights.np.temp[which(weights.np.temp>trunc.weight)]=trunc.weight
+    ### # # # # # # # # #  ###
 
     # updating data set to include bootstrapped observations
     data.temp=data.frame(data[temp.sample,],weights.np.temp)
@@ -212,6 +220,9 @@ coxDT = function(formula,L,R,data,subset,time.var=FALSE,subject=NULL,B.SE.np=200
 
       P.obs.NP.temp1=out.temp1$P.K
       weights.np.temp1=1/P.obs.NP.temp1
+      ### truncating weights ###
+      weights.np.temp1[which(weights.np.temp1>trunc.weight)]=trunc.weight
+      ### # # # # # # # # #  ###
 
       # updating data set to include bootstrapped observations
       data.temp1=data.frame(data[temp.sample1,],weights.np.temp1)
@@ -239,6 +250,9 @@ coxDT = function(formula,L,R,data,subset,time.var=FALSE,subject=NULL,B.SE.np=200
 
         P.obs.NP.temp2=out.temp2$P.K
         weights.np.temp2=1/P.obs.NP.temp2
+        ### truncating weights ###
+        weights.np.temp2[which(weights.np.temp2>trunc.weight)]=trunc.weight
+        ### # # # # # # # # #  ###
 
 
         # updating data set to include bootstrapped observations
